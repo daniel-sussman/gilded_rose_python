@@ -8,18 +8,14 @@ ownership (you can make the UpdateQuality method and Items property static if yo
 for you).
 """
 class GildedRose(object):
-
     def __init__(self, items):
         self.items = items
 
     def update_quality(self):
         for item in self.items:
-            self.__degrade(item)
+            item.quality = Degrader(item).degraded()
             item.sell_in -= 1
-    
-    def __degrade(self, item):
-        item_degrader = Degrader(item)
-        item_degrader.degrade()
+
 
 class Item:
     def __init__(self, name, sell_in, quality):
@@ -29,6 +25,7 @@ class Item:
 
     def __repr__(self):
         return "%s, %s, %s" % (self.name, self.sell_in, self.quality)
+
 
 class Degrader:
     def __init__(self, item, floor = 0, ceiling = 50):
@@ -41,11 +38,7 @@ class Degrader:
             "Backstage passes": self.__degrade_backstage_passes,
             "Conjured": self.__degrade_conjured_item
         }
-        self.__degrade_method = self.__select_degrade_method()
-
-    def degrade(self):
-        degraded_quality = self.__degrade_method()
-        self.item.quality = degraded_quality
+        self.degraded = self.__select_degrade_method()
     
     def __select_degrade_method(self):
         for key in self.__degrade_methods:
