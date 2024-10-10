@@ -35,22 +35,22 @@ class Degrader:
         self.item = item
         self.floor = floor
         self.ceiling = ceiling
-        self.__degrader_methods = {
+        self.__degrade_methods = {
             "Aged Brie": self.__degrade_aged_brie,
             "Sulfuras": self.__degrade_sulfuras,
             "Backstage passes": self.__degrade_backstage_passes,
             "Conjured": self.__degrade_conjured_item
         }
-        self.__degrade_method = self.__select_degrade_method(item.name)
+        self.__degrade_method = self.__select_degrade_method()
 
     def degrade(self):
         degraded_quality = self.__degrade_method()
         self.item.quality = degraded_quality
     
-    def __select_degrade_method(self, item_name):
-        for key in self.__degrader_methods:
-            if key in item_name:
-                return self.__degrader_methods[key]
+    def __select_degrade_method(self):
+        for key in self.__degrade_methods:
+            if key in self.item.name:
+                return self.__degrade_methods[key]
         return self.__degrade_perishable_item
 
     def __floor(self, value):
