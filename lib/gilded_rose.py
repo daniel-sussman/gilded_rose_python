@@ -14,8 +14,12 @@ class GildedRose(object):
 
     def update_quality(self):
         for item in self.items:
-            item.degrade()
+            self.__degrade(item)
             item.sell_in -= 1
+    
+    def __degrade(self, item):
+        item_degrader = Degrader(item)
+        item_degrader.degrade()
 
 class Item:
     def __init__(self, name, sell_in, quality):
@@ -26,34 +30,55 @@ class Item:
     def __repr__(self):
         return "%s, %s, %s" % (self.name, self.sell_in, self.quality)
 
-class PerishableItem(Item):
-    def degrade(self):
-        degraded_quality = self.quality - 1 if self.sell_in > 0 else self.quality - 2
-        self.quality = max(0, degraded_quality)
+class Degrader:
+    def __init__(self, item, floor = 0, ceiling = 50):
+        self.item = item
+        self.floor = floor
+        self.ceiling = ceiling
+        self.__degrader_methods = {
+            "Aged Brie": self.__degrade_aged_brie,
+            "Sulfuras": self.__degrade_sulfuras,
+            "Backstage passes": self.__degrade_backstage_passes,
+            "Conjured": self.__degrade_conjured_item
+        }
+        self.__degrade_method = self.__select_degrade_method(item.name)
 
-class ConjuredItem(Item):
     def degrade(self):
-        degraded_quality = self.quality - 2 if self.sell_in > 0 else self.quality - 4
-        self.quality = max(0, degraded_quality)
+        degraded_quality = self.__degrade_method()
+        self.item.quality = degraded_quality
+    
+    def __select_degrade_method(self, item_name):
+        for key in self.__degrader_methods:
+            if key in item_name:
+                return self.__degrader_methods[key]
+        return self.__degrade_perishable_item
 
-class AgedBrie(Item):
-    def degrade(self):
-        degraded_quality = self.quality + 1
-        self.quality = min(50, degraded_quality)
+    def __floor(self, value):
+        return max(self.floor, value)
+    
+    def __ceiling(self, value):
+        return min(self.ceiling, value)
 
-class Sulfuras(Item):
-    def degrade(self):
-        pass
+    def __degrade_perishable_item(self):
+        degraded_quality = self.item.quality - 1 if self.item.sell_in > 0 else self.item.quality - 2
+        return self.__floor(degraded_quality)
 
-class BackstagePasses(Item):
-    def degrade(self):
-        if self.sell_in <= 0:
-            degraded_quality = 0
-        elif self.sell_in <= 5:
-            degraded_quality = self.quality + 3
-        elif self.sell_in <=10:
-            degraded_quality = self.quality + 2
+    def __degrade_aged_brie(self):
+        return self.__ceiling(self.item.quality + 1)
+
+    def __degrade_sulfuras(self):
+        return self.item.quality
+
+    def __degrade_conjured_item(self):
+        degraded_quality = self.item.quality - 2 if self.item.sell_in > 0 else self.item.quality - 4
+        return self.__floor(degraded_quality)
+
+    def __degrade_backstage_passes(self):
+        if self.item.sell_in <= 0:
+            return 0
+        elif self.item.sell_in <= 5:
+            return self.__ceiling(self.item.quality + 3)
+        elif self.item.sell_in <=10:
+            return self.__ceiling(self.item.quality + 2)
         else:
-            degraded_quality = self.quality + 1
-
-        self.quality = min(50, degraded_quality)
+            return self.__ceiling(self.item.quality + 1)

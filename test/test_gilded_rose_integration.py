@@ -2,27 +2,27 @@ from lib.gilded_rose import *
 
 def fetch_items():
     items = [
-            PerishableItem(name="+5 Dexterity Vest", sell_in=10, quality=20),
-            AgedBrie(name="Aged Brie", sell_in=2, quality=0),
-            PerishableItem(name="Elixir of the Mongoose", sell_in=5, quality=7),
-            Sulfuras(name="Sulfuras, Hand of Ragnaros", sell_in=0, quality=80),
-            Sulfuras(name="Sulfuras, Hand of Ragnaros", sell_in=-1, quality=80),
-            BackstagePasses(name="Backstage passes to a TAFKAL80ETC concert", sell_in=15, quality=20),
-            BackstagePasses(name="Backstage passes to a TAFKAL80ETC concert", sell_in=10, quality=49),
-            BackstagePasses(name="Backstage passes to a TAFKAL80ETC concert", sell_in=5, quality=49),
-            ConjuredItem(name="Conjured Mana Cake", sell_in=3, quality=6),  # <-- :O
+            Item(name="+5 Dexterity Vest", sell_in=10, quality=20),
+            Item(name="Aged Brie", sell_in=2, quality=0),
+            Item(name="Elixir of the Mongoose", sell_in=5, quality=7),
+            Item(name="Sulfuras, Hand of Ragnaros", sell_in=0, quality=80),
+            Item(name="Sulfuras, Hand of Ragnaros", sell_in=-1, quality=80),
+            Item(name="Backstage passes to a TAFKAL80ETC concert", sell_in=15, quality=20),
+            Item(name="Backstage passes to a TAFKAL80ETC concert", sell_in=10, quality=49),
+            Item(name="Backstage passes to a TAFKAL80ETC concert", sell_in=5, quality=49),
+            Item(name="Conjured Mana Cake", sell_in=3, quality=6),  # <-- :O
         ]
     return items
 
 def fetch_items_excluding_sulfuras():
     items = [
-            PerishableItem(name="+5 Dexterity Vest", sell_in=10, quality=20),
-            AgedBrie(name="Aged Brie", sell_in=2, quality=0),
-            PerishableItem(name="Elixir of the Mongoose", sell_in=5, quality=7),
-            BackstagePasses(name="Backstage passes to a TAFKAL80ETC concert", sell_in=15, quality=20),
-            BackstagePasses(name="Backstage passes to a TAFKAL80ETC concert", sell_in=10, quality=49),
-            BackstagePasses(name="Backstage passes to a TAFKAL80ETC concert", sell_in=5, quality=49),
-            ConjuredItem(name="Conjured Mana Cake", sell_in=3, quality=6),  # <-- :O
+            Item(name="+5 Dexterity Vest", sell_in=10, quality=20),
+            Item(name="Aged Brie", sell_in=2, quality=0),
+            Item(name="Elixir of the Mongoose", sell_in=5, quality=7),
+            Item(name="Backstage passes to a TAFKAL80ETC concert", sell_in=15, quality=20),
+            Item(name="Backstage passes to a TAFKAL80ETC concert", sell_in=10, quality=49),
+            Item(name="Backstage passes to a TAFKAL80ETC concert", sell_in=5, quality=49),
+            Item(name="Conjured Mana Cake", sell_in=3, quality=6),  # <-- :O
         ]
     return items
 
@@ -120,7 +120,7 @@ def test_backstage_passes_increasn_quality_as_its_sell_in_value_approaches():
         assert backstage_passes.quality == quality_of_previous_day + 1
 
 def test_backstage_passes_quality_increases_by_2_when_there_are_10_days_or_less():
-    backstage_passes = BackstagePasses(name="Backstage passes to a TAFKAL80ETC concert", sell_in=10, quality=20)
+    backstage_passes = Item(name="Backstage passes to a TAFKAL80ETC concert", sell_in=10, quality=20)
     gilded_rose = GildedRose([backstage_passes])
     for _ in range(5):
         quality_of_previous_day = backstage_passes.quality
@@ -128,7 +128,7 @@ def test_backstage_passes_quality_increases_by_2_when_there_are_10_days_or_less(
         assert backstage_passes.quality == quality_of_previous_day + 2
 
 def test_backstage_passes_quality_increases_by_3_when_there_are_5_days_or_less():
-    backstage_passes = BackstagePasses(name="Backstage passes to a TAFKAL80ETC concert", sell_in=5, quality=20)
+    backstage_passes = Item(name="Backstage passes to a TAFKAL80ETC concert", sell_in=5, quality=20)
     gilded_rose = GildedRose([backstage_passes])
     for _ in range(5):
         quality_of_previous_day = backstage_passes.quality
@@ -136,7 +136,7 @@ def test_backstage_passes_quality_increases_by_3_when_there_are_5_days_or_less()
         assert backstage_passes.quality == quality_of_previous_day + 3
 
 def test_backstage_passes_quality_increases_by_3_when_there_are_5_days_or_less():
-    backstage_passes = BackstagePasses(name="Backstage passes to a TAFKAL80ETC concert", sell_in=4, quality=25)
+    backstage_passes = Item(name="Backstage passes to a TAFKAL80ETC concert", sell_in=4, quality=25)
     gilded_rose = GildedRose([backstage_passes])
     for _ in range(5):
         gilded_rose.update_quality()
@@ -149,7 +149,7 @@ We have recently signed a supplier of conjured items. This requires an update to
 
 """
 def test_conjured_items_degrade_in_quality_twice_as_fast_as_normal_items():
-    conjured_item = ConjuredItem(name="Conjured Mana Cake", sell_in=3, quality=50)
+    conjured_item = Item(name="Conjured Mana Cake", sell_in=3, quality=50)
     gilded_rose = GildedRose([conjured_item])
     for _ in range(3):
         quality_of_previous_day = conjured_item.quality
